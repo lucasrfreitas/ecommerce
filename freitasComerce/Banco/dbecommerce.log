@@ -1,0 +1,14 @@
+/*C1*/SET SCHEMA SYSTEM_LOBS
+INSERT INTO BLOCKS VALUES(0,2147483647,0)
+COMMIT
+/*C2*/SET SCHEMA PUBLIC
+CREATE TABLE  teste(\u000a        id IDENTITY PRIMARY KEY,\u000a        nome VARCHAR(50),\u000a        email VARCHAR(50)\u000a)
+INSERT INTO TESTE VALUES(0,'Boteco Digital','blogbotecodigital@gmail.com')
+COMMIT
+INSERT INTO TESTE VALUES(1,'Rodrigo','rodrigo@algumacoisa.com')
+COMMIT
+INSERT INTO TESTE VALUES(2,'Thiago','thiago@algumacoisa.com')
+COMMIT
+INSERT INTO TESTE VALUES(3,'Joao','joao@algumacoisa.com')
+COMMIT
+DISCONNECT
