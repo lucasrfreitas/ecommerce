@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 //import java.sql.ResultSet;
 import java.sql.SQLException;
 //import java.sql.Statement;
+import java.sql.Statement;
 
 /**
  * @author Lucas Freitas
@@ -23,6 +24,8 @@ public class Jdbc {
 	private static final String URL = "jdbc:hsqldb:file:" + PathBase
 			+ ";shutdown=true;hsqldb.write_delay=false; ";
 	private static final String DRIVER_CLASS = "org.hsqldb.jdbcDriver";
+	private Statement stm = null;
+	private static Connection conn = null;
 	
 	public Jdbc() {
 		try {
@@ -30,19 +33,7 @@ public class Jdbc {
 			Class.forName(DRIVER_CLASS);
 
 			// Estabelecendo conexão
-			connection = DriverManager.getConnection(URL, usuario, senha);
-			
-			/*Statement stm= connection.createStatement();
-		    ResultSet rs = stm.executeQuery("SELECT * FROM teste");
-		 
-		    while(rs.next()){
-		        String nome = rs.getString("nome");
-		        String email = rs.getString("email");
-		 
-		        System.out.println(nome+" - "+email);
-		    }
-		    stm.execute("SHUTDOWN");*/
-			
+			connection = DriverManager.getConnection(URL, usuario, senha);	
 			
 		} catch (ClassNotFoundException e) {
 			System.out.println("Driver nao encontrado");
@@ -56,7 +47,17 @@ public class Jdbc {
 			jdbc = new Jdbc();
 		return Jdbc.connection;
 	}
-
+	
+	public Statement getStatement() {
+		// Criando uma declaração - Statement
+		try {
+			stm = conn.createStatement();
+			return stm;
+		} catch (SQLException e) {
+			System.out.println("Erro ao obter um Statement");
+			return null;
+		}
+	}
 
 	@SuppressWarnings("finally")
 	public static PreparedStatement getPrepareStatement(String sql) {
