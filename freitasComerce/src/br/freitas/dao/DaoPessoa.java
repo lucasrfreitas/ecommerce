@@ -1,5 +1,6 @@
 package br.freitas.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,8 +10,8 @@ import br.freitas.model.Pessoa;
 
 public class DaoPessoa {
 	
-	private final String SQL_INSERE_PESSOA = "INSERT INTO \"PUBLIC\".\"PESSOA\" (\"NOME\", \"FONE\", \"EMAIL\" ) VALUES (?,?,?)";
-	private final String SQL_ALTERA_PESSOA = "UPDATE \"PUBLIC\".\"PESSOA\" SET \"NOME\"=?, \"FONE\"=?, \"EMAIL\"=? WHERE \"ID\"=? ";
+	private final String SQL_INSERE_PESSOA = "INSERT INTO PESSOA (NOME, CPF, SENHA ) VALUES (?,?,?)";
+	private final String SQL_ALTERA_PESSOA = "UPDATE \"PUBLIC\".\"PESSOA\" SET \"NOME\"=?, \"CPF\"=?, \"SENHA\"=? WHERE \"ID\"=? ";
 	private final String SQL_DELETA_PESSOA = "DELETE FROM PUBLIC.PESSOA WHERE ID=? ";
 	private final String SQL_LISTA_PESSOA = "SELECT * FROM PESSOA";
 	private final String SQL_PESQUISA_PESSOA_CODIGO = SQL_LISTA_PESSOA
@@ -19,23 +20,18 @@ public class DaoPessoa {
 			+ " WHERE NOME LIKE ?";
 	
 	
-	private Jdbc CDB = null;
+	private JdbcIIIII CDB = null;
 
-	public DaoPessoa() {
-		CDB = new Jdbc();
+		
+	public boolean InserePessoa(Pessoa p) {
 
-	}
-	
-	
-	public boolean inserePessoa(Pessoa p) {
-
-		PreparedStatement stmt = Jdbc.getPrepareStatement(SQL_INSERE_PESSOA);
-		try {
+		
+		try(Connection connection = new jdbc().getConexao();
+				PreparedStatement stmt = connection.prepareStatement(SQL_INSERE_PESSOA);) {
 			stmt.setString(1, p.getNome());
 			stmt.setString(2, p.getCpf());
 			stmt.setString(3, p.getSenha());
 			stmt.execute();
-			stmt.close();
 			return true;
 		} catch (SQLException e) {
 			System.out.println("Erro no prepareStatement do inserePessoa"
@@ -45,9 +41,9 @@ public class DaoPessoa {
 		
 	}
 
-	public boolean alteraPessoa(Pessoa p) {
+	public boolean AlteraPessoa(Pessoa p) {
 
-		PreparedStatement stmt = Jdbc.getPrepareStatement(SQL_ALTERA_PESSOA);
+		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_ALTERA_PESSOA);
 		try {
 			stmt.setString(1, p.getNome());
 			stmt.setString(2, p.getCpf());
@@ -63,9 +59,9 @@ public class DaoPessoa {
 		}
 	}
 
-	public boolean deletaPessoa(Pessoa p) {
+	public boolean DeletaPessoa(Pessoa p) {
 
-		PreparedStatement stmt = Jdbc.getPrepareStatement(SQL_DELETA_PESSOA);
+		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_DELETA_PESSOA);
 		try {
 			stmt.setInt(1, p.getId());
 			stmt.execute();
@@ -78,7 +74,7 @@ public class DaoPessoa {
 		}
 	}
 
-	public ArrayList<Pessoa> listaPessoa() {
+	public ArrayList<Pessoa> ListaPessoa() {
 		Statement stm = CDB.getStatement();
 		ResultSet rs = null;
 		ArrayList<Pessoa> lista = new ArrayList<Pessoa>();
@@ -86,7 +82,7 @@ public class DaoPessoa {
 		try {
 			rs = stm.executeQuery(SQL_LISTA_PESSOA);
 			while (rs.next()) {
-				lista.add(setPessoa(rs));
+				lista.add(SetPessoa(rs));
 			}
 		} catch (SQLException e) {
 			System.out.println("Erro ao executar o Statement.executeQuery "
@@ -95,15 +91,15 @@ public class DaoPessoa {
 		return lista;
 	}
 
-	public Pessoa pesquisaPessoaCodigo(int cod) {
+	public Pessoa PesquisaPessoaCodigo(int cod) {
 		ResultSet rs = null;
-		PreparedStatement stmt = Jdbc.getPrepareStatement(SQL_PESQUISA_PESSOA_CODIGO);
+		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_PESQUISA_PESSOA_CODIGO);
 		try {
 			stmt.setInt(1, cod);
 			rs = stmt.executeQuery();
 			stmt.close();
 			rs.next();
-			return setPessoa(rs);
+			return SetPessoa(rs);
 		} catch (SQLException e) {
 			System.out.println("Erro no prepareStatement do pesquisaPessoa por ID"
 					+ e.toString());
@@ -113,16 +109,16 @@ public class DaoPessoa {
 	
 
 
-	public ArrayList<Pessoa> pesquisaPessoaNome(String termodebusca) {
+	public ArrayList<Pessoa> PesquisaPessoaNome(String termodebusca) {
 		ResultSet rs = null;
 		ArrayList<Pessoa> lista = new ArrayList<Pessoa>();
-		PreparedStatement stmt = Jdbc.getPrepareStatement(SQL_PESQUISA_PESSOA_NOME);
+		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_PESQUISA_PESSOA_NOME);
 		try {
 			stmt.setString(1, "%"+termodebusca+"%");
 			rs = stmt.executeQuery();
 			stmt.close();
 			while (rs.next()) {
-				lista.add(setPessoa(rs));
+				lista.add(SetPessoa(rs));
 			}
 			
 			return lista;
@@ -133,7 +129,7 @@ public class DaoPessoa {
 		}
 	}
 
-	private Pessoa setPessoa(ResultSet rs){
+	private Pessoa SetPessoa(ResultSet rs){
 		Pessoa umaPessoa = null;
 		try {
 			umaPessoa = new Pessoa(rs.getInt("ID"));

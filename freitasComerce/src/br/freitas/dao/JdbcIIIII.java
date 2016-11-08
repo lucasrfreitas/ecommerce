@@ -15,19 +15,20 @@ import java.sql.Statement;
  * @author Lucas Freitas
  *
  */
-public class Jdbc {
+public class JdbcIIIII {
 	private static Connection connection = null;
-	private static Jdbc jdbc;
-	private static String usuario = "SA";
+	private static JdbcIIIII jdbc;
+	private static String usuario = "sa";
 	private static String senha = "";
-	private static String PathBase = "D:\\Users\\Lucas Freitas\\workspace\\freitasComerce\\Banco\\dbecommerce";
+	private static String PathBase = "D:\\Users\\Lucas Freitas\\git\\ecommerce\\freitasComerce\\Banco\\dbecommerce";
+	//D:\Users\Lucas Freitas\git\ecommerce\freitasComerce
 	private static final String URL = "jdbc:hsqldb:file:" + PathBase
 			+ ";shutdown=true;hsqldb.write_delay=false; ";
 	private static final String DRIVER_CLASS = "org.hsqldb.jdbcDriver";
 	private Statement stm = null;
 	private static Connection conn = null;
 	
-	public Jdbc() {
+	public JdbcIIIII() {
 		try {
 			// Registrando um driver
 			Class.forName(DRIVER_CLASS);
@@ -42,10 +43,10 @@ public class Jdbc {
 		}
 	}
 
-	private static Connection getConexao() {
+	static Connection getConexao() {
 		if (jdbc == null)
-			jdbc = new Jdbc();
-		return Jdbc.connection;
+			jdbc = new JdbcIIIII();
+		return JdbcIIIII.connection;
 	}
 	
 	public Statement getStatement() {
@@ -61,10 +62,10 @@ public class Jdbc {
 
 	@SuppressWarnings("finally")
 	public static PreparedStatement getPrepareStatement(String sql) {
-		Jdbc.getConexao();
+		JdbcIIIII.getConexao();
 		PreparedStatement pst = null;
 		try {
-			pst = Jdbc.connection.prepareStatement(sql);
+			pst = JdbcIIIII.connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
