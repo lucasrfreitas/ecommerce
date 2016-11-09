@@ -1,5 +1,6 @@
 package br.freitas.control;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import br.freitas.dao.DaoPessoa;
@@ -23,7 +24,7 @@ public class ControlePessoa {
 		return new DaoPessoa().InserePessoa(umaPessoa);
 	}
 	
-	public static ArrayList<Pessoa> ListaPessoa(){
+	public static ArrayList<Pessoa> ListaPessoa() throws SQLException{
 		return new DaoPessoa().ListaPessoa();
 	}
 	

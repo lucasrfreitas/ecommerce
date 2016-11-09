@@ -74,21 +74,30 @@ public class DaoPessoa {
 		}
 	}
 
-	public ArrayList<Pessoa> ListaPessoa() {
-		Statement stm = CDB.getStatement();
+	@SuppressWarnings("finally")
+	/**
+	 * Lista todas as pessoas cadastradas
+	 * @return ArrayList - Com todas as pessoas cadastradas
+	 */
+	public ArrayList<Pessoa> ListaPessoa() throws SQLException {
+		Connection connection = new jdbc().getConexao();
+		PreparedStatement stmt = connection.prepareStatement(SQL_LISTA_PESSOA);
 		ResultSet rs = null;
 		ArrayList<Pessoa> lista = new ArrayList<Pessoa>();
 
 		try {
-			rs = stm.executeQuery(SQL_LISTA_PESSOA);
+			rs = stmt.executeQuery();
+			stmt.close();
 			while (rs.next()) {
 				lista.add(SetPessoa(rs));
 			}
 		} catch (SQLException e) {
 			System.out.println("Erro ao executar o Statement.executeQuery "
 					+ e.toString());
+		} finally {
+			return lista;
 		}
-		return lista;
+
 	}
 
 	public Pessoa PesquisaPessoaCodigo(int cod) {
