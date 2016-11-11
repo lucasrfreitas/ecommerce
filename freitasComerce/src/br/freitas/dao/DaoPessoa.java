@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import br.freitas.model.Pessoa;
 
+@SuppressWarnings("unused")
 public class DaoPessoa {
 	
 	private final String SQL_INSERE_PESSOA = "INSERT INTO PESSOA (NOME, CPF, SENHA ) VALUES (?,?,?)";
@@ -18,10 +19,6 @@ public class DaoPessoa {
 			+ " WHERE ID=?";
 	private final String SQL_PESQUISA_PESSOA_NOME= SQL_LISTA_PESSOA 
 			+ " WHERE NOME LIKE ?";
-	
-	
-	private JdbcIIIII CDB = null;
-
 		
 	public boolean InserePessoa(Pessoa p) {
 
@@ -42,9 +39,9 @@ public class DaoPessoa {
 	}
 
 	public boolean AlteraPessoa(Pessoa p) {
-
-		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_ALTERA_PESSOA);
-		try {
+		try (Connection connection = new jdbc().getConexao();
+		PreparedStatement stmt = connection.prepareStatement(SQL_ALTERA_PESSOA);)
+		{
 			stmt.setString(1, p.getNome());
 			stmt.setString(2, p.getCpf());
 			stmt.setString(3, p.getSenha());
@@ -60,9 +57,9 @@ public class DaoPessoa {
 	}
 
 	public boolean DeletaPessoa(Pessoa p) {
-
-		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_DELETA_PESSOA);
-		try {
+		try (Connection connection = new jdbc().getConexao();
+				PreparedStatement stmt = connection.prepareStatement(SQL_DELETA_PESSOA);)
+				{
 			stmt.setInt(1, p.getId());
 			stmt.execute();
 			stmt.close();
@@ -102,8 +99,9 @@ public class DaoPessoa {
 
 	public Pessoa PesquisaPessoaCodigo(int cod) {
 		ResultSet rs = null;
-		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_PESQUISA_PESSOA_CODIGO);
-		try {
+		try (Connection connection = new jdbc().getConexao();
+			PreparedStatement stmt = connection.prepareStatement(SQL_PESQUISA_PESSOA_CODIGO);)
+			{
 			stmt.setInt(1, cod);
 			rs = stmt.executeQuery();
 			stmt.close();
@@ -121,8 +119,9 @@ public class DaoPessoa {
 	public ArrayList<Pessoa> PesquisaPessoaNome(String termodebusca) {
 		ResultSet rs = null;
 		ArrayList<Pessoa> lista = new ArrayList<Pessoa>();
-		PreparedStatement stmt = JdbcIIIII.getPrepareStatement(SQL_PESQUISA_PESSOA_NOME);
-		try {
+		try (Connection connection = new jdbc().getConexao();
+				PreparedStatement stmt = connection.prepareStatement(SQL_PESQUISA_PESSOA_NOME);)
+		{
 			stmt.setString(1, "%"+termodebusca+"%");
 			rs = stmt.executeQuery();
 			stmt.close();
